@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:gymtracker/components/training_tile.dart';
-
+import 'package:gymtracker/data/database_helper.dart';
 import '../components/button.dart';
+import '../data/model/exercise.dart';
 
-/*
- GUI Fertig soweit
- TODO: Logik, anbindung an DB, Trennung von Trainings- und Übungselementen,
- Training = Komposition von Übungen.
- joa
- */
-
-class CreatePlans extends StatelessWidget{ //change auf Stateful sobald nicht statische Elemente auf der UI benötigt werden
+class CreatePlans extends StatefulWidget{
   const CreatePlans({super.key});
 
   @override
+  State<CreatePlans> createState() => _CreatePlansState();
+}
+
+class _CreatePlansState extends State<CreatePlans> {
+  List<Exercise> _exercises = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchExercises();
+  }
+
+  Future<void> _fetchExercises() async {
+    final exerciseMaps = await DatabaseHelper.instance.queryAllExercises();
+    setState(() {
+      _exercises = exerciseMaps.map((userMap) => Exercise.fromMap(userMap)).toList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List TrainingList = [
+    List trainingList = [
       TrainingTile(
-        name: "Neues Training",
-        imagePath: "lib/assets/images/fitnessstudio.png",
-        details: () {}
+          name: "Neues Training",
+          imagePath: "lib/assets/images/fitnessstudio.png",
+          details: () {}
       ),
       TrainingTile(
           name: "Cardio",
@@ -33,28 +47,15 @@ class CreatePlans extends StatelessWidget{ //change auf Stateful sobald nicht st
       ),
     ];
 
-    List ExerciseList = [
+    List exerciseList = [
       TrainingTile(
           name: "Neue Übung",
           imagePath: "lib/assets/images/fitnessstudio.png",
-          details: () {}
-      ),
-      TrainingTile(
-          name: "Push-Ups",
-          imagePath: "lib/assets/images/fitnessstudio.png",
-          details: () {}
-      ),
-      TrainingTile(
-          name: "Pull-Ups",
-          imagePath: "lib/assets/images/fitnessstudio.png",
-          details: () {}
-      ),
-      TrainingTile(
-          name: "Sit-Ups",
-          imagePath: "lib/assets/images/fitnessstudio.png",
-          details: () {}
+          details: () => Navigator.pushNamed(context, '/create_exercise')
       ),
     ];
+
+    _exercises.forEach((exercise) => exerciseList.add(TrainingTile(name: exercise.name, imagePath: exercise.iconPath, details: (){})));
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 70, 200, 170),
@@ -103,11 +104,11 @@ class CreatePlans extends StatelessWidget{ //change auf Stateful sobald nicht st
           ),
           SizedBox(height: 10),
           Expanded(
-              child: ListView.builder(
-                  itemBuilder: (context, index) => TrainingList[index],
-                  itemCount: TrainingList.length,
-                  scrollDirection: Axis.horizontal,
-              ),
+                child: ListView.builder(
+                    itemBuilder: (context, index) => trainingList[index],
+                    itemCount: trainingList.length,
+                    scrollDirection: Axis.horizontal,
+                ),
           ),
           SizedBox(height: 15),
           Padding(
@@ -122,11 +123,11 @@ class CreatePlans extends StatelessWidget{ //change auf Stateful sobald nicht st
           ),
           SizedBox(height: 10),
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => ExerciseList[index],
-              itemCount: ExerciseList.length,
-              scrollDirection: Axis.horizontal,
-            ),
+              child: ListView.builder(
+                itemBuilder: (context, index) => exerciseList[index],
+                itemCount: exerciseList.length,
+                scrollDirection: Axis.horizontal,
+              ),
           ),
           SizedBox(height: 25),
           MyButton(buttonText: "Training Beginnen",
