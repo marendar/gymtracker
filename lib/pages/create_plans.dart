@@ -55,7 +55,10 @@ class _CreatePlansState extends State<CreatePlans> {
       ),
     ];
 
-    _exercises.forEach((exercise) => exerciseList.add(TrainingTile(name: exercise.name, imagePath: exercise.iconPath, details: (){})));
+    _exercises.forEach((exercise) => exerciseList.add(TrainingTile(name: exercise.name, imagePath: exercise.iconPath, details: (){
+      Navigator.pushNamed(context, '/edit_exercise');
+
+    })));
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 70, 200, 170),
