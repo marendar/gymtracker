@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymtracker/pages/choose_icon.dart';
 import 'package:gymtracker/pages/create_plans.dart';
 import 'package:gymtracker/pages/create_exercise.dart';
+import 'package:gymtracker/pages/create_training.dart';
 import 'package:gymtracker/pages/edit_exercise.dart';
 import 'package:gymtracker/pages/start_page_fuer_maks.dart';
 import 'package:gymtracker/utility/asset_manager.dart';
@@ -29,6 +30,7 @@ class GymTracker extends StatelessWidget{
        '/create_exercise': (context) => CreateExercise(),
        '/choose_icon': (context) => ChooseIcon(),
        '/edit_exercise': (context) => EditExercise(),
+       '/create_training':(context) => CreateTraining(),
      },
     );
 

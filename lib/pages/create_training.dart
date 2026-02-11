@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gymtracker/components/button.dart';
 import 'package:gymtracker/components/training_tile.dart';
-import 'package:gymtracker/data/model/exercise.dart';
 import 'package:gymtracker/utility/asset_manager.dart';
 import '../data/database_helper.dart';
+import '../data/model/training.dart';
 
-class CreateExercise extends StatefulWidget{
-
-  const CreateExercise({super.key});
+class CreateTraining extends StatefulWidget{
+  const CreateTraining({super.key});
 
   @override
-  State<StatefulWidget> createState() => _CreateExerciseState();
+  State<StatefulWidget> createState() => _CreateTrainingState();
 }
 
-class _CreateExerciseState extends State<CreateExercise>{
+class _CreateTrainingState extends State<CreateTraining>{
   final textEditingControllerName = TextEditingController();
   final textEditingControllerNotes = TextEditingController();
   String iconPath = AssetManager.iconPath;
@@ -22,13 +21,13 @@ class _CreateExerciseState extends State<CreateExercise>{
   @override
   void initState() {
     super.initState();
-    _fetchNumberOfExercises();
+    _fetchNumberOfTrainings();
   }
 
-  Future<void> _fetchNumberOfExercises() async {
-    final exerciseMaps = await DatabaseHelper.instance.queryAllExercises();
+  Future<void> _fetchNumberOfTrainings() async {
+    final trainingMaps = await DatabaseHelper.instance.queryAllTrainings();
     setState(() {
-      idCounter = exerciseMaps.map((userMap) => Exercise.fromMap(userMap)).toList().length+1;
+      idCounter = trainingMaps.map((userMap) => Training.fromMap(userMap)).toList().length+1;
     });
   }
 
@@ -44,7 +43,7 @@ class _CreateExerciseState extends State<CreateExercise>{
     return Scaffold(
         backgroundColor: Color.fromARGB(255, 70, 200, 170),
         appBar: AppBar(
-          title: Text("Übung anlegen"),
+          title: Text("Training anlegen"),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           actions: [Padding(
@@ -58,22 +57,22 @@ class _CreateExerciseState extends State<CreateExercise>{
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextFormField(
-                    controller: textEditingControllerName,
-                    onChanged: (text) => setState(() {}),
-                    decoration: InputDecoration(
+                  controller: textEditingControllerName,
+                  onChanged: (text) => setState(() {}),
+                  decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 2,
-                      )
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        )
                     ),
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2,
-                      )
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        )
                     ),
-                    labelText: 'Name der Übung',
+                    labelText: 'Name des Trainings',
                   ),
                 ),
               ),
@@ -81,21 +80,21 @@ class _CreateExerciseState extends State<CreateExercise>{
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextFormField(
-                    controller: textEditingControllerNotes,
-                    decoration: InputDecoration(
+                  controller: textEditingControllerNotes,
+                  decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 2,
-                      )
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        )
                     ),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white,
-                            width: 2,
-                          )
-                      ),
-                    labelText: 'Notizen zur Übung',
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        )
+                    ),
+                    labelText: 'Notizen zum Training',
                   ),
                 ),
               ),
@@ -103,18 +102,18 @@ class _CreateExerciseState extends State<CreateExercise>{
               if(!(iconPath == ''))
                 Center(
                   child: TrainingTile(
-                    name:textEditingControllerName.value.text,
-                    imagePath: iconPath,
-                    details:() {}
+                      name:textEditingControllerName.value.text,
+                      imagePath: iconPath,
+                      details:() {}
                   ),
                 ),
               MyButton(buttonText: 'Icon Auswählen',
-                  event: () => Navigator.pushNamed(context, '/choose_icon').then((icon) {setState(() { iconPath = AssetManager.iconPath;});})),
-              MyButton(buttonText: 'Übung Erstellen',
+                  event: () => Navigator.pushNamed(context, '/choose_icon').then((text) => setState(() {}))),
+              MyButton(buttonText: 'Training Erstellen',
                   event: () {
-                    DatabaseHelper.instance.insertExercise
-                      (Exercise(
-                        exerciseId: idCounter,
+                    DatabaseHelper.instance.insertTraining
+                      (Training(
+                        trainingId: idCounter,
                         name: textEditingControllerName.value.text,
                         notes: textEditingControllerNotes.value.text,
                         iconPath: iconPath));
@@ -123,5 +122,5 @@ class _CreateExerciseState extends State<CreateExercise>{
               )]
         ));
   }
-  
+
 }

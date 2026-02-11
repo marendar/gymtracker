@@ -1,4 +1,5 @@
 import 'package:gymtracker/data/model/exercise.dart';
+import 'package:gymtracker/data/model/training.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -23,7 +24,8 @@ class DatabaseHelper {
           await db.execute(
               'CREATE TABLE trainings('
                   'trainingId INTEGER PRIMARY KEY, '
-                  'name TEXT, notes TEXT, '
+                  'name TEXT, '
+                  'notes TEXT, '
                   'iconPath TEXT)');
           await db.execute(
             'CREATE TABLE exercises('
@@ -58,6 +60,21 @@ class DatabaseHelper {
   Future<int> deleteExercise(int id) async {
     Database db = await instance.db;
     return await db.delete('exercises', where: 'exerciseId = ?', whereArgs: [id]);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllTrainings() async {
+    Database db = await instance.db;
+    return await db.query('trainings');
+  }
+
+  Future<int> insertTraining(Training training) async{
+    Database db = await instance.db;
+    return await db.insert('trainings', training.toMap());
+  }
+
+  Future<int> deleteTraining(int id) async {
+    Database db = await instance.db;
+    return await db.delete('trainings', where: 'trainingId = ?', whereArgs: [id]);
   }
 
 }

@@ -11,6 +11,20 @@ class Training{
     required this.iconPath});
 
   Map<String, Object?> toMap(){
-    return {'id': trainingId, 'name': name, 'notes': notes};
+    return {'trainingId': trainingId, 'name': name, 'notes': notes, 'iconPath': iconPath};
+  }
+
+  @override
+  String toString() {
+    return 'Exercise{id: $trainingId, name: $name, notes: $notes, iconPath: $iconPath}';
+  }
+
+  factory Training.fromMap(Map<String, dynamic> map) {
+    return Training(
+      trainingId:  map['trainingId'],
+      name: map['name'],
+      notes: map['notes'],
+      iconPath: map['iconPath'],
+    );
   }
 }

@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gymtracker/components/training_tile.dart';
 import 'package:gymtracker/utility/asset_manager.dart';
-
 import '../components/button.dart';
 
 class ChooseIcon extends StatelessWidget{
+  const ChooseIcon({super.key});
+
 
   @override
   Widget build(BuildContext context) {
     List<TrainingTile> iconList = [];
     int iconCount = AssetManager.pathList.length;
     for(int i = 0; i < iconCount; i++){
-      iconList.add(
-          new TrainingTile(
+      iconList.add(TrainingTile(
               name: AssetManager.pathList.elementAt(i).replaceAll('lib/assets/images/', ''),
               imagePath: AssetManager.pathList.elementAt(i),
               details: () => AssetManager.setIconPath(AssetManager.pathList.elementAt(i))
@@ -48,16 +47,21 @@ class ChooseIcon extends StatelessWidget{
                 ),
               ),
               SizedBox(height: 10),
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) => iconList[index],
-                  itemCount: iconList.length,
-                  scrollDirection: Axis.horizontal,
+              Container(
+                width: 400,
+                height: 480,
+                child: Expanded(
+                  child: GridView.count(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.85,
+                      children:iconList
+                  )
                 ),
               ),
               MyButton(buttonText: 'Icon Wählen',
-                  event: () => Navigator.pushNamed(context, '/create_exercise')),
-              SizedBox(height: 420),
+                  event: () => Navigator.pop(context)
+              ),
+              SizedBox(height: 20),
             ]
       )
     );

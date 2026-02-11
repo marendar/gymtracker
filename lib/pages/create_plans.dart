@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gymtracker/components/training_tile.dart';
 import 'package:gymtracker/data/database_helper.dart';
+import 'package:gymtracker/data/model/training.dart';
+import 'package:gymtracker/utility/asset_manager.dart';
 import '../components/button.dart';
 import '../data/model/exercise.dart';
 
@@ -13,11 +15,13 @@ class CreatePlans extends StatefulWidget{
 
 class _CreatePlansState extends State<CreatePlans> {
   List<Exercise> _exercises = [];
+  List<Training> _trainings = [];
 
   @override
   void initState() {
     super.initState();
     _fetchExercises();
+    _fetchTrainings();
   }
 
   Future<void> _fetchExercises() async {
@@ -27,27 +31,26 @@ class _CreatePlansState extends State<CreatePlans> {
     });
   }
 
+  Future<void> _fetchTrainings() async {
+    final trainingMaps = await DatabaseHelper.instance.queryAllTrainings();
+    setState(() {
+      _trainings = trainingMaps.map((userMap) => Training.fromMap(userMap)).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List trainingList = [
+    List<TrainingTile> trainingList = [
       TrainingTile(
           name: "Neues Training",
           imagePath: "lib/assets/images/fitnessstudio.png",
-          details: () {}
-      ),
-      TrainingTile(
-          name: "Cardio",
-          imagePath: "lib/assets/images/fitnessstudio.png",
-          details: () {}
-      ),
-      TrainingTile(
-          name: "Push-Split",
-          imagePath: "lib/assets/images/fitnessstudio.png",
-          details: () {}
+          details: () => Navigator.pushNamed(context, '/create_training')
       ),
     ];
 
-    List exerciseList = [
+    trainingList = _addEntriesFromDB(trainingList, true);
+
+    List<TrainingTile> exerciseList = [
       TrainingTile(
           name: "Neue Übung",
           imagePath: "lib/assets/images/fitnessstudio.png",
@@ -55,10 +58,7 @@ class _CreatePlansState extends State<CreatePlans> {
       ),
     ];
 
-    _exercises.forEach((exercise) => exerciseList.add(TrainingTile(name: exercise.name, imagePath: exercise.iconPath, details: (){
-      Navigator.pushNamed(context, '/edit_exercise');
-
-    })));
+    exerciseList = _addEntriesFromDB(exerciseList, false);
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 70, 200, 170),
@@ -138,5 +138,30 @@ class _CreatePlansState extends State<CreatePlans> {
         ],
       )
     );
+  }
+
+  List<TrainingTile> _addEntriesFromDB(List<TrainingTile> list, bool isTraining) {
+    if(isTraining){
+      _trainings.forEach((training) {
+        list.add(TrainingTile(
+            name: training.name,
+            imagePath: training.iconPath,
+            details: () {
+              AssetManager.setIdToBeDeleted(training.trainingId);
+              Navigator.pushNamed(context, '/edit_exercise');
+            }));
+      });
+    } else {
+      _exercises.forEach((exercise){
+        list.add(TrainingTile(
+            name: exercise.name,
+            imagePath: exercise.iconPath,
+            details: () {
+              AssetManager.setIdToBeDeleted(exercise.exerciseId);
+              Navigator.pushNamed(context, '/edit_exercise');
+            }));
+      });
+    }
+    return list;
   }
 }
